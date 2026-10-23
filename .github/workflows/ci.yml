@@ -1,47 +1,22 @@
-name: CI
+name: CI（后端测试 + 前端构建）
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-
-      - name: Install root dependencies
-        run: |
-          if [ -f "package.json" ]; then
-            npm install
-          fi
-
-      - name: Install frontend dependencies and build
-        run: |
-          if [ -d "web" ]; then
-            cd web
-            if [ -f "package.json" ]; then
-              npm install
-              npm run build
-            fi
-            cd ..
-          fi
-
-      - name: Run tests
-        run: |
-          if [ -f "package.json" ] && grep -q "\"test\"" package.json; then
-            npm test
-          else
-            echo "No test script defined, skipping."
-          fi
-        env:
-          NODE_ENV: test
+          node-version: 22
+      - run: npm install
+      - name: 后端测试（Node + D1 行为模拟）
+        run: npm test
+      - name: 前端构建
+        run: npm run build
