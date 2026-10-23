@@ -30,4 +30,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: amosgantian/nav-item-backend:latest
+          tags: ${{ github.repository_owner }}/nav-item-backend:latest
