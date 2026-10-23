@@ -9,7 +9,7 @@
 #   DOMAIN=nav.example.com ADMIN_USERNAME=amos ADMIN_PASSWORD='请设置强密码' \
 #     bash <(curl -fsSL https://raw.githubusercontent.com/gansweet/nav-item/main/install-serv00-ct8.sh)
 #
-# 环境变量：DOMAIN、ADMIN_USERNAME、ADMIN_PASSWORD、PORT、BRANCH、SOURCE_URL。
+# 环境变量：DOMAIN、ADMIN_USERNAME、ADMIN_PASSWORD、PORT、BRANCH、SOURCE_URL、RECREATE_NODEJS_SITE。
 # 脚本会保留现有 .env、database/ 与 uploads/；不会覆盖非 Node.js 类型的网站。
 # =============================================================================
 set -Eeuo pipefail
@@ -21,6 +21,9 @@ BRANCH="${BRANCH:-main}"
 SOURCE_URL="${SOURCE_URL:-https://github.com/${REPO_SLUG}/archive/refs/heads/${BRANCH}.tar.gz}"
 PORT="${PORT:-3000}"
 ADMIN_USERNAME="${ADMIN_USERNAME:-amos}"
+# Devil 的 www list 通常不显示现有解释器路径；默认重建 Node.js 站点条目以确保使用检测到的 Node 22+。
+# 已确认现有站点解释器符合要求且不想重置站点级设置时，可设置 RECREATE_NODEJS_SITE=0。
+RECREATE_NODEJS_SITE="${RECREATE_NODEJS_SITE:-1}"
 DOMAIN_WAS_SET=0
 [[ -n "${DOMAIN:-}" ]] && DOMAIN_WAS_SET=1
 
@@ -141,6 +144,8 @@ fi
 [[ "$CURRENT_DOMAIN" =~ ^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$ ]] || \
   die "域名格式不正确：${CURRENT_DOMAIN}。请设置 DOMAIN=example.com，不要包含 http:// 或路径。"
 [[ "$PORT" =~ ^[0-9]+$ ]] || die "PORT 必须是数字，当前值：${PORT}"
+[[ "$RECREATE_NODEJS_SITE" == '0' || "$RECREATE_NODEJS_SITE" == '1' ]] || die 'RECREATE_NODEJS_SITE 只能设置为 0 或 1。'
+# Passenger 会把请求转发给 Node.js 应用内部监听端口；这里的 PORT=3000 不是 Serv00 分配的外部随机端口。
 
 WORKDIR="${HOME}/domains/${CURRENT_DOMAIN}/public_nodejs"
 ENV_FILE="${WORKDIR}/.env"
@@ -176,6 +181,61 @@ tar -xzf "$ARCHIVE" --strip-components=1 -C "$SOURCE_DIR"
 [[ -f "$SOURCE_DIR/app.js" && -f "$SOURCE_DIR/package.json" && -f "$SOURCE_DIR/web/package.json" ]] || \
   die '下载的源码缺少 app.js、package.json 或 web/package.json，已停止以避免部署不完整的程序。'
 
+# Serv00/CT8 的 Passenger 会用 node-loader.js 加载 app.js，而不是把 app.js 放在 process.argv[1]。
+# 上游入口判断若只比较 process.argv[1] 与 import.meta.url，会导致 createServer/listen 完全不执行，
+# 表现为静态文件正常但首页/API 动态请求一直等待。这里先修补临时源码，再复制到正式目录。
+info '正在检查并修正 Passenger 启动入口……'
+APP_JS_PATH="$SOURCE_DIR/app.js" "$NODE_BIN" --input-type=module <<'NODE'
+import fs from 'node:fs';
+
+const file = process.env.APP_JS_PATH;
+if (!file) {
+  console.error('APP_JS_PATH 未设置。');
+  process.exit(2);
+}
+let source = fs.readFileSync(file, 'utf8');
+
+const alreadyPatched = source.includes('NAV_SERV00_PASSENGER_COMPAT') ||
+  (/node-loader\.js/i.test(source) &&
+   /if\s*\([^)]*(?:__navIsPassengerLoader|isPassengerLoader)[^)]*\)/s.test(source));
+
+if (alreadyPatched) {
+  console.log('源码已包含 Passenger 启动兼容逻辑，跳过重复修改。');
+} else {
+  const replacement = `/* NAV_SERV00_PASSENGER_COMPAT */
+const __navIsPassengerLoader =
+  path.basename(String(process.argv[1] || '')).toLowerCase() === 'node-loader.js';
+
+let __navIsDirectEntry = false;
+try {
+  __navIsDirectEntry = Boolean(process.argv[1]) &&
+    fs.realpathSync(process.argv[1]) ===
+    fs.realpathSync(fileURLToPath(import.meta.url));
+} catch (e) {
+  console.error('[startup] Direct-entry path check failed:', e.message);
+}
+
+console.error('[startup] Passenger loader detected:', __navIsPassengerLoader);
+if (__navIsDirectEntry || __navIsPassengerLoader) {`;
+
+  const originalGuard = /if\s*\(\s*process\.argv\[1\]\s*&&\s*path\.resolve\(\s*process\.argv\[1\]\s*\)\s*===\s*fileURLToPath\(\s*import\.meta\.url\s*\)\s*\)\s*\{/;
+  const previousFixGuard = /if\s*\(\s*isMainEntry\s*\)\s*\{/;
+
+  if (originalGuard.test(source)) {
+    source = source.replace(originalGuard, replacement);
+  } else if (previousFixGuard.test(source)) {
+    source = source.replace(previousFixGuard, replacement);
+  } else {
+    console.error('未找到已知的 app.js 启动判断。为避免部署后应用不启动，停止安装。');
+    process.exit(3);
+  }
+
+  fs.writeFileSync(file, source);
+  console.log('已为 Passenger 增加 node-loader.js 启动兼容。');
+}
+NODE
+"$NODE_BIN" --check "$SOURCE_DIR/app.js" || die 'app.js 语法检查失败，停止安装。'
+
 info '正在复制程序文件（保留现有 .env、database/ 和 uploads/）……'
 # .env 只需保存一份很小的副本。当前仓库将 database/、uploads/ 加入 .gitignore，
 # 源码归档不会带上这些运行数据，因此不复制大型数据库/上传目录，避免耗尽共享主机配额。
@@ -186,12 +246,6 @@ cp -a "$SOURCE_DIR"/. "$WORKDIR"/
 
 mkdir -p "$WORKDIR/database" "$WORKDIR/uploads"
 chmod 755 "$WORKDIR" "$WORKDIR/database" "$WORKDIR/uploads" 2>/dev/null || true
-
-# Passenger/Devil 主机可能在 public/ 放置默认欢迎页；项目自己通过 web/dist 提供页面。
-# 只清理默认 index.html，不删除目录中的其它用户文件。
-if [[ -f "$WORKDIR/public/index.html" ]]; then
-  rm -f "$WORKDIR/public/index.html"
-fi
 
 # ------------------------ 运行配置 ------------------------
 ENV_CREATED=0
@@ -234,7 +288,8 @@ if [[ "$(uname -s 2>/dev/null || true)" == 'FreeBSD' ]]; then
   (
     cd "$WORKDIR/web"
     npm pkg set 'overrides.vite.rollup=npm:@rollup/wasm-node'
-    # 覆盖依赖来源后重新生成 lockfile，避免旧锁文件继续锁定原生 Rollup 包。
+    # 清理旧原生模块和锁文件，避免继承之前安装失败留下的平台相关依赖。
+    rm -rf node_modules
     rm -f package-lock.json
   )
 fi
@@ -253,13 +308,25 @@ if [[ -z "$SITE_LINE" ]]; then
 else
   SITE_TYPE="$(printf '%s\n' "$SITE_LINE" | awk '{print tolower($2)}')"
   [[ "$SITE_TYPE" == 'nodejs' ]] || die "域名类型已发生变化，拒绝覆盖：${SITE_LINE}"
-  if ! printf '%s\n' "$SITE_LINE" | grep -Fq "$NODE_BIN"; then
-    warn "现有 Node.js 站点使用的运行时可能不符合要求，将重新创建该 Node.js 虚拟主机（项目数据目录不会删除）。"
+  if [[ "$RECREATE_NODEJS_SITE" == '1' ]]; then
+    warn "为确保使用 ${NODE_BIN}，将重建现有 Node.js 网站条目。项目目录、.env、database/ 和 uploads/ 不会删除；网站级选项（例如 Force SSL）可能需要在面板重新确认。"
     devil www del "$CURRENT_DOMAIN" || die "删除旧 Node.js 虚拟主机失败：${CURRENT_DOMAIN}"
     devil www add "$CURRENT_DOMAIN" nodejs "$NODE_BIN" || \
       die "使用 ${NODE_BIN} 创建 Node.js 站点失败，请检查 Devil 主机的 Node.js 支持情况。"
   else
-    info '站点已经使用符合要求的 Node.js 运行时。'
+    warn '保留现有 Node.js 网站条目。请在 Serv00/CT8 面板确认 Interpreter path 指向本脚本检测到的 Node.js 运行时。'
+  fi
+fi
+
+# Devil/Serv00 may recreate its welcome page when a Node.js vhost is added/recreated.
+# Remove the known provider placeholder AFTER the vhost operation; preserve any custom index.html.
+PUBLIC_INDEX="$WORKDIR/public/index.html"
+if [[ -f "$PUBLIC_INDEX" ]]; then
+  if grep -Eqi 'Node\.js page successfully added|This file can be deleted[[:space:]]*\(index\.html\)|The page is in the directory' "$PUBLIC_INDEX"; then
+    rm -f "$PUBLIC_INDEX"
+    info '已移除 Serv00/CT8 自动生成的默认欢迎页。'
+  else
+    warn '检测到 public/index.html，但不是可识别的主机默认欢迎页；为保护现有文件，未自动删除。'
   fi
 fi
 
@@ -302,11 +369,33 @@ if [[ "$DOMAIN_WAS_SET" -eq 1 ]]; then
 fi
 
 if command -v curl >/dev/null 2>&1; then
-  HTTP_CODE="$(curl -k -sS --max-time 12 -o /dev/null -w '%{http_code}' "https://${CURRENT_DOMAIN}/" 2>/dev/null || true)"
-  if [[ "$HTTP_CODE" == '200' ]]; then
-    ok 'HTTPS 首页返回 HTTP 200。'
+  CHECK_HOME_BODY="${TMP_DIR}/homepage-check.html"
+  CHECK_API_BODY="${TMP_DIR}/api-menus-check.json"
+  HOME_HTTP_CODE=''
+  API_HTTP_CODE=''
+  info '正在检查首页和菜单 API（首次启动可能需要数秒）……'
+  for attempt in 1 2 3 4 5 6; do
+    HOME_HTTP_CODE="$(curl -k -sS --connect-timeout 4 --max-time 8 -o "$CHECK_HOME_BODY" -w '%{http_code}' "https://${CURRENT_DOMAIN}/" 2>/dev/null || true)"
+    API_HTTP_CODE="$(curl -k -sS --connect-timeout 4 --max-time 8 -o "$CHECK_API_BODY" -w '%{http_code}' "https://${CURRENT_DOMAIN}/api/menus" 2>/dev/null || true)"
+    if [[ "$HOME_HTTP_CODE" == '200' && "$API_HTTP_CODE" == '200' ]]; then
+      break
+    fi
+    sleep 2
+  done
+
+  if [[ "$HOME_HTTP_CODE" == '200' ]] && ! grep -Eqi 'Node\.js page successfully added|This file can be deleted[[:space:]]*\(index\.html\)|The page is in the directory' "$CHECK_HOME_BODY"; then
+    ok "HTTPS 首页返回 HTTP 200。"
+  elif [[ "$HOME_HTTP_CODE" == '200' ]]; then
+    warn '首页仍然返回 Serv00/CT8 默认欢迎页；请检查 public/index.html。'
   else
-    warn "当前 HTTPS 检查返回 ${HTTP_CODE:-无响应}。这不一定代表安装失败，也可能是 DNS、证书或主机站点重启尚未完成；请稍后访问站点并检查 devil www list。"
+    warn "首页检查未成功，HTTP=${HOME_HTTP_CODE:-无响应}。请检查 Passenger 启动日志。"
+  fi
+
+  if [[ "$API_HTTP_CODE" == '200' ]]; then
+    ok '菜单 API /api/menus 返回 HTTP 200。'
+  else
+    warn "菜单 API 检查未成功，HTTP=${API_HTTP_CODE:-无响应}。安装文件已经部署，但应用还未通过 API 健康检查；请查看 logs/error.log。"
+    [[ ! -s "$CHECK_API_BODY" ]] || { echo '菜单 API 返回内容：'; head -c 500 "$CHECK_API_BODY"; echo; }
   fi
 fi
 

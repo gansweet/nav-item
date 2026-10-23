@@ -304,8 +304,17 @@ HTTPS 需要域名已解析到本机且 80/443 端口开放。
 - 后台管理用户名和密码默认分别为为`amos`和`sweet`
   * `DOMAIN`为自定义站点域名
 
+- 普通安装：自动识别默认域名
 ```bash
-bash <(curl -Ls https://github.com/gansweet/nav-item/releases/download/nav/nav_install.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/gansweet/nav-item/main/install-serv00-ct8.sh)
+```
+
+- 自定义域名和管理员密码
+```
+DOMAIN=nav.example.com \
+ADMIN_USERNAME=amos \
+ADMIN_PASSWORD='请替换为你的强密码' \
+bash <(curl -fsSL https://raw.githubusercontent.com/gansweet/nav-item/main/install-serv00-ct8.sh)
 ```
 > 该脚本托管在原仓库的 Releases 里，本次改造没有改动它。v2.0 需要 **Node.js ≥ 22.13**，使用前请确认主机提供该版本；如果主机的 Node 较旧，请改用 Cloudflare / docker 方式。使用新版代码需要重新发布对应的 Release 包。
 
