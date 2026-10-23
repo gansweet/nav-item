@@ -229,11 +229,11 @@ docker run -d \
   -e NODE_ENV=production \
   -e ADMIN_USERNAME=amos \
   -e ADMIN_PASSWORD=sweet \
-  amosgantian/nav-item
+  amosgantian/nav-item-backend
 ```
 > 从旧版升级且旧版把图片放在 `uploads/` 目录时，再加一行 `-v $(pwd)/uploads:/app/uploads` 即可继续显示旧图片。新上传的图片存放在数据库里，随 `database/` 一起持久化。
 
-#### 2. gansweet-compose.yaml 部署
+#### 2. docker-compose.yaml 部署
 ```yaml
 version: '3'
 
@@ -260,7 +260,7 @@ amosgantian/nav-item-backend
 ```
 ghcr.io/gansweet/nav-item:latest
 ```
-> 以上镜像需由本仓库的 GitHub Actions 重新构建后才是 v2.0 版本（见 `.github/workflows/`）；也可以在项目目录里 `gansweet build -t nav-item .` 本地构建。
+> 以上镜像需由本仓库的 GitHub Actions 重新构建后才是 v2.0 版本（见 `.github/workflows/`）；也可以在项目目录里 `docker build -t nav-item .` 本地构建。
 
 ### 方式五：Debian / Ubuntu 一键部署（新）
 

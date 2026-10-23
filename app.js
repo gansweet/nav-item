@@ -24,16 +24,40 @@ const COMPRESSIBLE = /^(text\/|application\/(json|javascript|xml)|image\/svg)/;
 export function createServer(db, env = process.env) {
   const coreEnv = { ...env, DB: db };
 
+  
   async function readBody(req) {
     const chunks = [];
     let size = 0;
+    let tooLarge = false;
+
     for await (const c of req) {
+      // 超过大小限制后，不再保存请求体，但继续读取数据，
+      // 避免中途终止请求流，导致客户端出现 fetch failed。
+      if (tooLarge) {
+        continue;
+      }
+
       size += c.length;
-      if (size > MAX_BODY) { const e = new Error('请求体过大'); e.status = 413; throw e; }
+
+      if (size > MAX_BODY) {
+        tooLarge = true;
+        chunks.length = 0;
+        continue;
+      }
+
       chunks.push(c);
     }
+
+    // 请求流读取完成后，再返回明确的 413 状态。
+    if (tooLarge) {
+      const e = new Error('请求体过大');
+      e.status = 413;
+      throw e;
+    }
+
     return chunks.length ? Buffer.concat(chunks) : undefined;
   }
+
 
   function send(req, res, status, headers, body) {
     const h = { ...headers };
