@@ -9,7 +9,7 @@
 | 方式 | 运行环境 | 数据库 |
 | --- | --- | --- |
 | ☁️ **Cloudflare Workers / Pages**（新） | Cloudflare 边缘网络 | **Cloudflare D1**（SQLite） |
-| 🖥️ **自托管**（原有） | Node.js ≥ 22.13：源码 / Docker / docker-compose / Debian 一键脚本 / serv00 | 本地 SQLite 文件（`database/nav.db`） |
+| 🖥️ **自托管**（原有） | Node.js ≥ 22.13：源码 / gansweet / gansweet-compose / Debian 一键脚本 / serv00 | 本地 SQLite 文件（`database/nav.db`） |
 
 ## 🛠️ 技术栈
 
@@ -69,7 +69,7 @@ nav-item/
 │   ├── old-db-to-json.js     # 旧版 nav.db → 备份 JSON
 │   └── gen-migration.js
 ├── test/                     # node:test 自动化测试
-├── Dockerfile / docker-compose.yml / .github/workflows/
+├── gansweetfile / gansweet-compose.yml / .github/workflows/
 └── web/                      # Vue 前端
     ├── public/logos/         #   7 个内置 SVG logo
     └── src/
@@ -109,7 +109,7 @@ Node 部署可复制 `.env.example` 为 `.env`；Cloudflare 本地开发复制 `
 - 一个 Cloudflare 账号；本机安装 Node.js ≥ 22（用来构建前端和运行 wrangler）。
 
 ```bash
-git clone https://github.com/Amosgantian/nav-item.git
+git clone https://github.com/gansweet/nav-item.git
 cd nav-item
 npm install          # 安装 wrangler 与 bcryptjs
 npm run build        # 构建前端 → web/dist
@@ -205,7 +205,7 @@ npx wrangler pages deploy web/dist --project-name nav-item
 ### 方式三：自托管 · 源码部署（Node.js ≥ 22.13）
 
 ```bash
-git clone https://github.com/Amosgantian/nav-item.git
+git clone https://github.com/gansweet/nav-item.git
 cd nav-item
 npm install                              # 后端依赖（仅 bcryptjs，无原生模块）
 cd web && npm install && npm run build   # 构建前端
@@ -218,11 +218,11 @@ cd .. && npm start                       # 启动
 
 > 与旧版的区别：不再需要编译 `sqlite3` / `bcrypt` 等原生模块；但 Node 版本需 **≥ 22.13**（使用内置 `node:sqlite`）。
 
-### 方式四：Docker 部署
+### 方式四：gansweet 部署
 
-#### 1. docker 快速部署
+#### 1. gansweet 快速部署
 ```bash
-docker run -d \
+gansweet run -d \
   --name nav-item \
   -p 3000:3000 \
   -v $(pwd)/database:/app/database \
@@ -233,13 +233,13 @@ docker run -d \
 ```
 > 从旧版升级且旧版把图片放在 `uploads/` 目录时，再加一行 `-v $(pwd)/uploads:/app/uploads` 即可继续显示旧图片。新上传的图片存放在数据库里，随 `database/` 一起持久化。
 
-#### 2. docker-compose.yaml 部署
+#### 2. gansweet-compose.yaml 部署
 ```yaml
 version: '3'
 
 services:
   nav-item-backend:
-    image: amosgantian/nav-item-backend
+    image: gansweet/nav-item-backend
     container_name: navigation
     ports:
       - "3000:3000"
@@ -252,15 +252,15 @@ services:
     restart: unless-stopped
 ```
 
-#### 3. 使用 docker image 配合环境变量部署
+#### 3. 使用 gansweet image 配合环境变量部署
 ```
-amosgantian/nav-item-backend
+gansweet/nav-item-backend
 ```
 或
 ```
-ghcr.io/amosgantian/nav-item:latest
+ghcr.io/gansweet/nav-item:latest
 ```
-> 以上镜像需由本仓库的 GitHub Actions 重新构建后才是 v2.0 版本（见 `.github/workflows/`）；也可以在项目目录里 `docker build -t nav-item .` 本地构建。
+> 以上镜像需由本仓库的 GitHub Actions 重新构建后才是 v2.0 版本（见 `.github/workflows/`）；也可以在项目目录里 `gansweet build -t nav-item .` 本地构建。
 
 ### 方式五：Debian / Ubuntu 一键部署（新）
 
@@ -268,7 +268,7 @@ ghcr.io/amosgantian/nav-item:latest
 
 **在线一键**（把命令里的仓库地址换成你自己的，前提是你已把本项目推送到该仓库）：
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/Amosgantian/nav-item/main/scripts/install-debian.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/gansweet/nav-item/main/scripts/install-debian.sh)
 ```
 
 **本地运行**（已下载 / 解压项目）：
@@ -302,9 +302,9 @@ HTTPS 需要域名已解析到本机且 80/443 端口开放。
   * `DOMAIN`为自定义站点域名
 
 ```bash
-bash <(curl -Ls https://github.com/Amosgantian/nav-item/releases/download/nav/nav_install.sh)
+bash <(curl -Ls https://github.com/gansweet/nav-item/releases/download/nav/nav_install.sh)
 ```
-> 该脚本托管在原仓库的 Releases 里，本次改造没有改动它。v2.0 需要 **Node.js ≥ 22.13**，使用前请确认主机提供该版本；如果主机的 Node 较旧，请改用 Cloudflare / Docker 方式。使用新版代码需要重新发布对应的 Release 包。
+> 该脚本托管在原仓库的 Releases 里，本次改造没有改动它。v2.0 需要 **Node.js ≥ 22.13**，使用前请确认主机提供该版本；如果主机的 Node 较旧，请改用 Cloudflare / gansweet 方式。使用新版代码需要重新发布对应的 Release 包。
 
 ---
 
