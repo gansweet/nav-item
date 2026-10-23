@@ -2,7 +2,7 @@ version: '3'
 
 services:
   nav-item-backend:
-    image: gansweet/nav-item-backend
+    image: ghcr.io/gansweet/nav-item:latest   # or this one: amosgantian/nav-item-backend
     container_name: navigation
     ports:
       - "3000:3000"

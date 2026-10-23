@@ -239,7 +239,7 @@ version: '3'
 
 services:
   nav-item-backend:
-    image: amosgantian/nav-item-backend
+    image: ghcr.io/gansweet/nav-item:latest   # or this one: amosgantian/nav-item-backend
     container_name: navigation
     ports:
       - "3000:3000"
@@ -252,7 +252,7 @@ services:
     restart: unless-stopped
 ```
 
-#### 3. 使用 amosgantian image 配合环境变量部署
+#### 3. 使用 docker image 配合环境变量部署
 ```
 amosgantian/nav-item-backend
 ```
