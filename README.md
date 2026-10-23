@@ -234,6 +234,9 @@ docker run -d \
 > 从旧版升级且旧版把图片放在 `uploads/` 目录时，再加一行 `-v $(pwd)/uploads:/app/uploads` 即可继续显示旧图片。新上传的图片存放在数据库里，随 `database/` 一起持久化。
 
 #### 2. docker-compose.yaml 部署
+- sudo docker compose up -d --build
+- or open the directory: sudo docker compose pull && sudo docker compose up -d
+
 ```yaml
 version: '3'
 
