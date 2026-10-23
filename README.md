@@ -218,18 +218,18 @@ cd .. && npm start                       # 启动
 
 > 与旧版的区别：不再需要编译 `sqlite3` / `bcrypt` 等原生模块；但 Node 版本需 **≥ 22.13**（使用内置 `node:sqlite`）。
 
-### 方式四：gansweet 部署
+### 方式四：docker 部署
 
-#### 1. gansweet 快速部署
+#### 1. docker 快速部署
 ```bash
-gansweet run -d \
+docker run -d \
   --name nav-item \
   -p 3000:3000 \
   -v $(pwd)/database:/app/database \
   -e NODE_ENV=production \
   -e ADMIN_USERNAME=amos \
   -e ADMIN_PASSWORD=sweet \
-  eooce/nav-item
+  amosgantian/nav-item
 ```
 > 从旧版升级且旧版把图片放在 `uploads/` 目录时，再加一行 `-v $(pwd)/uploads:/app/uploads` 即可继续显示旧图片。新上传的图片存放在数据库里，随 `database/` 一起持久化。
 
@@ -239,7 +239,7 @@ version: '3'
 
 services:
   nav-item-backend:
-    image: gansweet/nav-item-backend
+    image: amosgantian/nav-item-backend
     container_name: navigation
     ports:
       - "3000:3000"
@@ -252,9 +252,9 @@ services:
     restart: unless-stopped
 ```
 
-#### 3. 使用 gansweet image 配合环境变量部署
+#### 3. 使用 amosgantian image 配合环境变量部署
 ```
-gansweet/nav-item-backend
+amosgantian/nav-item-backend
 ```
 或
 ```
