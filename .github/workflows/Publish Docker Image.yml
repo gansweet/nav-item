@@ -30,4 +30,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ github.repository_owner }}/nav-item-backend:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/nav-item-backend:latest
