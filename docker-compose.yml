@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  nav-item-backend:
+    image: amosgantian/nav-item-backend
+    container_name: navigation
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000             # 监听端口
+      - ADMIN_USERNAME=amos  # 后台用户名
+      - ADMIN_PASSWORD=sweet # 后台密码（务必修改！仅在首次初始化数据库时生效）
+      # - JWT_SECRET=请改成一段随机字符串   # 可选；不设置则自动生成并保存在数据库里
+      # - ALLOW_PRIVATE_NETWORK=true      # 可选；允许“URL 导入 / 远程数据库”访问内网地址
+    volumes:
+      - ./database:/app/database  # 持久化数据库文件（上传的图片也存放在数据库里）
+      # - ./uploads:/app/uploads  # 仅当你是从旧版升级、且旧版把图片放在 uploads/ 目录时才需要
+    restart: unless-stopped

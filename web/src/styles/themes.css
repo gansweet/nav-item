@@ -1,0 +1,264 @@
+/* ==========================================================================
+   主题皮肤（App Themes）
+   通过 <html data-theme="xxx"> 切换；所有颜色都来自 CSS 变量。
+   default = 原项目外观（数值与改造前完全一致）。
+   变量分两组：
+     · 首页：--accent* / --home-* / --glass* / --search-bg
+     · 后台：--adm-*
+   ========================================================================== */
+
+/* 彩虹主题用的可动画色相（不支持 @property 的浏览器会退回静态色相） */
+@property --hue {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 320;
+}
+
+:root,
+:root[data-theme='default'] {
+  /* —— 首页 —— */
+  --accent: #399dff;
+  --accent-rgb: 57 157 255;
+  --accent-strong: #2d7dd2;
+  --accent-hover: #1976d2;
+  --home-overlay: rgba(0, 0, 0, 0.3);
+  --home-glow: none;
+  --home-glow-size: 100% 100%;
+  --home-glow-opacity: 0;
+  --home-glow-blend: normal;
+  --home-anim: none;
+  --glass: rgba(255, 255, 255, 0.15);
+  --glass-hover: rgba(255, 255, 255, 0.3);
+  --glass-border: transparent;
+  --search-bg: #b3b7b83b;
+  --switcher-bg: rgba(255, 255, 255, 0.18);
+  /* —— 后台 —— */
+  --adm-primary: #2566d8;
+  --adm-primary-dark: #174ea6;
+  --adm-primary-soft: #eaf1ff;
+  --adm-primary-rgb: 37 102 216;
+  --adm-grad-a: #667eea;
+  --adm-grad-a-rgb: 102 126 234;
+  --adm-grad-b: #764ba2;
+  --adm-grad-b-dark: #2f025d;
+  --adm-grad: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --adm-accent2: #1abc9c;
+}
+
+/* 🌊 海洋蓝：深海渐变 + 缓慢漂移的水光 */
+:root[data-theme='ocean'] {
+  --accent: #4fe3ff;
+  --accent-rgb: 79 227 255;
+  --accent-strong: #0ea5e9;
+  --accent-hover: #7dd3fc;
+  --home-overlay: linear-gradient(180deg, rgb(2 18 52 / 0.62) 0%, rgb(4 52 104 / 0.46) 55%, rgb(3 90 130 / 0.38) 100%);
+  --home-glow:
+    radial-gradient(45% 40% at 18% 28%, rgb(34 211 238 / 0.55), transparent 70%),
+    radial-gradient(50% 45% at 82% 72%, rgb(59 130 246 / 0.55), transparent 70%),
+    radial-gradient(40% 35% at 55% 10%, rgb(125 211 252 / 0.35), transparent 70%);
+  --home-glow-size: 160% 160%;
+  --home-glow-opacity: 0.85;
+  --home-anim: themeDrift 24s ease-in-out infinite alternate;
+  --glass: rgb(186 230 253 / 0.16);
+  --glass-hover: rgb(186 230 253 / 0.32);
+  --glass-border: rgb(125 211 252 / 0.28);
+  --search-bg: rgb(147 197 253 / 0.22);
+  --switcher-bg: rgb(125 211 252 / 0.22);
+  --adm-primary: #0284c7;
+  --adm-primary-dark: #075985;
+  --adm-primary-soft: #e0f2fe;
+  --adm-primary-rgb: 2 132 199;
+  --adm-grad-a: #0ea5e9;
+  --adm-grad-a-rgb: 14 165 233;
+  --adm-grad-b: #2563eb;
+  --adm-grad-b-dark: #1e3a8a;
+  --adm-grad: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+  --adm-accent2: #06b6d4;
+}
+
+/* 🌈 彩虹：色相持续循环的流动彩带，强调色也随色相缓慢变化 */
+:root[data-theme='rainbow'] {
+  --accent: hsl(var(--hue) 95% 68%);
+  --accent-rgb: 255 120 200;
+  --accent-strong: hsl(var(--hue) 85% 52%);
+  --accent-hover: hsl(var(--hue) 95% 78%);
+  --home-overlay: linear-gradient(180deg, rgb(8 6 24 / 0.72), rgb(8 6 24 / 0.6));
+  --home-glow:
+    radial-gradient(38% 34% at 14% 18%, #ff2d78, transparent 70%),
+    radial-gradient(36% 32% at 86% 22%, #1fb8ff, transparent 70%),
+    radial-gradient(40% 34% at 50% 55%, #7a4dff, transparent 70%),
+    radial-gradient(34% 30% at 16% 86%, #ffb11f, transparent 70%),
+    radial-gradient(36% 32% at 84% 84%, #2dff86, transparent 70%);
+  --home-glow-size: 170% 170%;
+  --home-glow-opacity: 0.7;
+  --home-glow-blend: screen;
+  --home-anim: themeDrift 22s ease-in-out infinite alternate, themeGlowHue 26s linear infinite;
+  --glass: rgb(255 255 255 / 0.17);
+  --glass-hover: rgb(255 255 255 / 0.34);
+  --glass-border: rgb(255 255 255 / 0.3);
+  --search-bg: rgb(255 255 255 / 0.2);
+  --switcher-bg: rgb(255 255 255 / 0.22);
+  --adm-primary: #7c3aed;
+  --adm-primary-dark: #5b21b6;
+  --adm-primary-soft: #f3e8ff;
+  --adm-primary-rgb: 124 58 237;
+  --adm-grad-a: #8b5cf6;
+  --adm-grad-a-rgb: 139 92 246;
+  --adm-grad-b: #ec4899;
+  --adm-grad-b-dark: #831843;
+  --adm-grad: linear-gradient(135deg, #f43f5e 0%, #f59e0b 25%, #22c55e 50%, #3b82f6 75%, #8b5cf6 100%);
+  --adm-accent2: #ec4899;
+  animation: themeHue 120s steps(360) infinite;      /* 驱动强调色的 --hue：每秒约 3 次更新，既顺滑又省性能 */
+}
+
+/* 🌹 玫瑰：酒红到粉的暖色，柔光呼吸 */
+:root[data-theme='rose'] {
+  --accent: #ff8fc0;
+  --accent-rgb: 255 143 192;
+  --accent-strong: #e11d79;
+  --accent-hover: #ffb3d4;
+  --home-overlay: linear-gradient(160deg, rgb(58 6 34 / 0.6) 0%, rgb(110 18 66 / 0.42) 60%, rgb(150 30 90 / 0.34) 100%);
+  --home-glow:
+    radial-gradient(42% 38% at 20% 25%, rgb(244 114 182 / 0.6), transparent 70%),
+    radial-gradient(48% 42% at 80% 75%, rgb(225 29 120 / 0.5), transparent 70%),
+    radial-gradient(36% 30% at 60% 15%, rgb(253 164 175 / 0.4), transparent 70%);
+  --home-glow-size: 170% 170%;
+  --home-glow-opacity: 0.8;
+  --home-anim: themeDrift 20s ease-in-out infinite alternate;
+  --glass: rgb(255 214 232 / 0.16);
+  --glass-hover: rgb(255 214 232 / 0.32);
+  --glass-border: rgb(251 182 214 / 0.3);
+  --search-bg: rgb(251 182 214 / 0.22);
+  --switcher-bg: rgb(251 182 214 / 0.24);
+  --adm-primary: #db2777;
+  --adm-primary-dark: #9d174d;
+  --adm-primary-soft: #fce7f3;
+  --adm-primary-rgb: 219 39 119;
+  --adm-grad-a: #f472b6;
+  --adm-grad-a-rgb: 244 114 182;
+  --adm-grad-b: #be185d;
+  --adm-grad-b-dark: #500724;
+  --adm-grad: linear-gradient(135deg, #f472b6 0%, #be185d 100%);
+  --adm-accent2: #fb7185;
+}
+
+/* 🌲 山林：墨绿 + 薄雾，缓慢流动 */
+:root[data-theme='forest'] {
+  --accent: #72f0a8;
+  --accent-rgb: 114 240 168;
+  --accent-strong: #16a34a;
+  --accent-hover: #a7f3d0;
+  --home-overlay: linear-gradient(180deg, rgb(4 30 20 / 0.62) 0%, rgb(8 58 38 / 0.46) 60%, rgb(14 80 56 / 0.36) 100%);
+  --home-glow:
+    radial-gradient(45% 40% at 22% 30%, rgb(52 211 153 / 0.5), transparent 70%),
+    radial-gradient(50% 45% at 78% 70%, rgb(132 204 22 / 0.4), transparent 70%),
+    radial-gradient(38% 34% at 50% 8%, rgb(167 243 208 / 0.3), transparent 70%);
+  --home-glow-size: 160% 160%;
+  --home-glow-opacity: 0.8;
+  --home-anim: themeDrift 28s ease-in-out infinite alternate;
+  --glass: rgb(209 250 229 / 0.14);
+  --glass-hover: rgb(209 250 229 / 0.3);
+  --glass-border: rgb(110 231 183 / 0.28);
+  --search-bg: rgb(110 231 183 / 0.2);
+  --switcher-bg: rgb(110 231 183 / 0.22);
+  --adm-primary: #15803d;
+  --adm-primary-dark: #14532d;
+  --adm-primary-soft: #dcfce7;
+  --adm-primary-rgb: 21 128 61;
+  --adm-grad-a: #22c55e;
+  --adm-grad-a-rgb: 34 197 94;
+  --adm-grad-b: #0f766e;
+  --adm-grad-b-dark: #042f2e;
+  --adm-grad: linear-gradient(135deg, #22c55e 0%, #0f766e 100%);
+  --adm-accent2: #84cc16;
+}
+
+/* 🌇 晚霞：橙红到紫的天空渐变，光斑缓慢移动 */
+:root[data-theme='sunset'] {
+  --accent: #ffb454;
+  --accent-rgb: 255 180 84;
+  --accent-strong: #f97316;
+  --accent-hover: #ffd08a;
+  --home-overlay: linear-gradient(180deg, rgb(36 8 62 / 0.62) 0%, rgb(120 30 70 / 0.42) 55%, rgb(190 80 30 / 0.34) 100%);
+  --home-glow:
+    radial-gradient(44% 38% at 15% 78%, rgb(251 146 60 / 0.62), transparent 70%),
+    radial-gradient(48% 42% at 85% 25%, rgb(192 38 211 / 0.5), transparent 70%),
+    radial-gradient(40% 36% at 50% 55%, rgb(244 63 94 / 0.4), transparent 70%);
+  --home-glow-size: 170% 170%;
+  --home-glow-opacity: 0.85;
+  --home-anim: themeDrift 22s ease-in-out infinite alternate;
+  --glass: rgb(255 226 200 / 0.15);
+  --glass-hover: rgb(255 226 200 / 0.3);
+  --glass-border: rgb(253 186 116 / 0.3);
+  --search-bg: rgb(253 186 116 / 0.22);
+  --switcher-bg: rgb(253 186 116 / 0.24);
+  --adm-primary: #ea580c;
+  --adm-primary-dark: #9a3412;
+  --adm-primary-soft: #ffedd5;
+  --adm-primary-rgb: 234 88 12;
+  --adm-grad-a: #f97316;
+  --adm-grad-a-rgb: 249 115 22;
+  --adm-grad-b: #a21caf;
+  --adm-grad-b-dark: #4a044e;
+  --adm-grad: linear-gradient(135deg, #f97316 0%, #e11d48 55%, #a21caf 100%);
+  --adm-accent2: #f43f5e;
+}
+
+/* 🌅 朝阳：金橙 → 粉 → 天蓝的晨光，整体更明亮 */
+:root[data-theme='sunrise'] {
+  --accent: #ffd36b;
+  --accent-rgb: 255 211 107;
+  --accent-strong: #f59e0b;
+  --accent-hover: #ffe3a0;
+  --home-overlay: linear-gradient(180deg, rgb(110 40 20 / 0.5) 0%, rgb(150 40 90 / 0.4) 45%, rgb(20 45 100 / 0.52) 100%);
+  --home-glow:
+    radial-gradient(46% 40% at 50% 100%, rgb(255 200 80 / 0.7), transparent 70%),
+    radial-gradient(42% 36% at 15% 20%, rgb(255 140 120 / 0.45), transparent 70%),
+    radial-gradient(44% 38% at 88% 30%, rgb(120 190 255 / 0.4), transparent 70%);
+  --home-glow-size: 160% 160%;
+  --home-glow-opacity: 0.75;
+  --home-anim: themeRise 26s ease-in-out infinite alternate;
+  --glass: rgb(255 244 220 / 0.2);
+  --glass-hover: rgb(255 244 220 / 0.36);
+  --glass-border: rgb(255 214 140 / 0.38);
+  --search-bg: rgb(255 226 170 / 0.28);
+  --switcher-bg: rgb(255 226 170 / 0.3);
+  --adm-primary: #d97706;
+  --adm-primary-dark: #92400e;
+  --adm-primary-soft: #fef3c7;
+  --adm-primary-rgb: 217 119 6;
+  --adm-grad-a: #fbbf24;
+  --adm-grad-a-rgb: 251 191 36;
+  --adm-grad-b: #f43f5e;
+  --adm-grad-b-dark: #7f1d1d;
+  --adm-grad: linear-gradient(135deg, #fbbf24 0%, #fb7185 60%, #60a5fa 100%);
+  --adm-accent2: #f59e0b;
+}
+
+/* ---------- 关键帧（全局，供各主题通过变量引用） ---------- */
+@keyframes themeDrift {
+  0%   { background-position: 0% 30%; }
+  100% { background-position: 100% 70%; }
+}
+@keyframes themeRise {
+  0%   { background-position: 50% 100%; }
+  100% { background-position: 50% 0%; }
+}
+@keyframes themeHue {
+  from { --hue: 0; }
+  to   { --hue: 360; }
+}
+@keyframes themeGlowHue {
+  to { filter: hue-rotate(360deg); }
+}
+@keyframes themeSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* 减少动态效果：尊重系统设置 */
+@media (prefers-reduced-motion: reduce) {
+  :root, :root[data-theme] {
+    --home-anim: none;
+    animation: none !important;
+  }
+}

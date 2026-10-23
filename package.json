@@ -1,0 +1,30 @@
+{
+  "name": "nav-item",
+  "version": "2.0.0",
+  "type": "module",
+  "author": "sweet",
+  "description": "nav-item：个人导航站（Vue 3 + Cloudflare Workers/Pages + D1，同时兼容 Node + SQLite 自托管）",
+  "repository": "https://github.com/Amosgantian/nav-item",
+  "license": "MIT",
+  "main": "app.js",
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning app.js",
+    "dev": "node --disable-warning=ExperimentalWarning --watch app.js",
+    "build": "npm --prefix web install && npm --prefix web run build",
+    "test": "node --disable-warning=ExperimentalWarning --test \"test/**/*.test.js\"",
+    "gen:migration": "node scripts/gen-migration.js",
+    "migrate:old-db": "node --disable-warning=ExperimentalWarning scripts/old-db-to-json.js",
+    "cf:dev": "wrangler dev",
+    "cf:deploy": "npm run build && wrangler deploy",
+    "cf:d1:migrate": "wrangler d1 migrations apply nav-item-db --remote"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=22.13.0"
+  }
+}

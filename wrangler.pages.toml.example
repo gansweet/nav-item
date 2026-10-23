@@ -1,0 +1,11 @@
+# 仅供 Pages + wrangler CLI 本地调试参考：改名为 wrangler.toml（会覆盖 Workers 配置）后使用。
+# 通过 Git 在 Cloudflare 控制台部署 Pages 时，不需要这个文件，直接在控制台里绑定 D1 即可。
+name = "nav-item"
+pages_build_output_dir = "./web/dist"
+compatibility_date = "2025-09-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "nav-item-db"
+database_id = "00000000-0000-0000-0000-000000000000"

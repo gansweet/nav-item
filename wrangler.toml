@@ -1,0 +1,30 @@
+# ============================================================
+#  Cloudflare Workers 部署配置（Workers + 静态资源 + D1）
+#  使用前请把 database_id 换成你自己的（见 README「D1 数据库配置」）
+#  Pages 部署方式不使用本文件，改在控制台绑定 D1（见 README）
+# ============================================================
+name = "nav-item"
+main = "worker/index.js"
+compatibility_date = "2025-09-01"
+compatibility_flags = ["nodejs_compat"]   # 兜底：让依赖包里偶尔出现的 node:crypto 引用也能被打包
+
+# 前端构建产物（先在 web/ 下 npm run build）。
+# 只有 /api/* 和 /uploads/* 会先进入 Worker；其它路径直接由静态资源响应，
+# 未命中的页面路由（如 /admin）回退到 index.html（单页应用）。
+[assets]
+directory = "./web/dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*", "/uploads/*"]
+
+# D1 数据库：变量名必须是 DB（代码里通过 env.DB 访问）
+[[d1_databases]]
+binding = "DB"
+database_name = "nav-item-db"
+database_id = "00000000-0000-0000-0000-000000000000"   # ← 换成 `wrangler d1 create nav-item-db` 输出的 ID
+migrations_dir = "migrations"
+
+# 非敏感配置（首次初始化时用来创建默认管理员）。
+# ⚠️ 密码、JWT_SECRET 请使用 Secrets：wrangler secret put ADMIN_PASSWORD / JWT_SECRET
+[vars]
+ADMIN_USERNAME = "amos"

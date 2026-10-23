@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96" role="img" aria-label="地球">
+  <title>地球</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.55" y2="1">
+      <stop offset="0" stop-color="#6BE7F5"/>
+      <stop offset="1" stop-color="#0E7490"/>
+    </linearGradient>
+    <clipPath id="clip"><rect width="96" height="96" rx="24"/></clipPath>
+    
+  </defs>
+  <g clip-path="url(#clip)">
+    <rect width="96" height="96" fill="url(#bg)"/>
+    <path d="M0 0H96V38C72 52 24 52 0 38Z" fill="#fff" opacity=".16"/>
+    <circle cx="82" cy="84" r="34" fill="#000" opacity=".06"/>
+  </g>
+  
+  <defs>
+    <radialGradient id="sea" cx="0.35" cy="0.3" r="0.9">
+      <stop offset="0" stop-color="#7DD3FC"/><stop offset="1" stop-color="#1D6FD8"/>
+    </radialGradient>
+    <clipPath id="ball"><circle cx="48" cy="48" r="29"/></clipPath>
+  </defs>
+  <circle cx="48" cy="51" r="29" fill="#053B4A" opacity=".28"/>
+  <circle cx="48" cy="48" r="29" fill="url(#sea)"/>
+  <g clip-path="url(#ball)">
+    <path d="M24 34c5-8 14-9 19-6 3 2 1 6-3 8-3 2-2 6-6 8-4 2-6 8-11 6-5-2-6-10 1-16z" fill="#6BD16F"/>
+    <path d="M56 46c6-3 13 0 15 6 2 6-3 14-9 17-5 2-7-4-6-8 1-4-4-5-3-9 0-3 1-5 3-6z" fill="#6BD16F"/>
+    <path d="M46 20c4-1 9 0 12 2-2 3-6 4-9 3-3-1-5-3-3-5z" fill="#6BD16F"/>
+    <ellipse cx="48" cy="48" rx="12" ry="29" fill="none" stroke="#fff" stroke-opacity=".4" stroke-width="1.6"/>
+    <path d="M19 48h58M24 33h48M24 63h48" fill="none" stroke="#fff" stroke-opacity=".32" stroke-width="1.6"/>
+    <ellipse cx="38" cy="33" rx="12" ry="7" fill="#fff" opacity=".28" transform="rotate(-30 38 33)"/>
+  </g>
+  <circle cx="48" cy="48" r="29" fill="none" stroke="#fff" stroke-width="2.4" stroke-opacity=".85"/>
+</svg>

@@ -1,0 +1,11 @@
+node_modules
+web/node_modules
+web/dist
+database
+.git
+.github
+.wrangler
+.env
+.dev.vars
+test
+*.md
