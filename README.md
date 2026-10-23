@@ -69,7 +69,7 @@ nav-item/
 │   ├── old-db-to-json.js     # 旧版 nav.db → 备份 JSON
 │   └── gen-migration.js
 ├── test/                     # node:test 自动化测试
-├── gansweetfile / gansweet-compose.yml / .github/workflows/
+├── Dockerfile / docker-compose.yml / .github/workflows/
 └── web/                      # Vue 前端
     ├── public/logos/         #   7 个内置 SVG logo
     └── src/
@@ -304,7 +304,7 @@ HTTPS 需要域名已解析到本机且 80/443 端口开放。
 ```bash
 bash <(curl -Ls https://github.com/gansweet/nav-item/releases/download/nav/nav_install.sh)
 ```
-> 该脚本托管在原仓库的 Releases 里，本次改造没有改动它。v2.0 需要 **Node.js ≥ 22.13**，使用前请确认主机提供该版本；如果主机的 Node 较旧，请改用 Cloudflare / gansweet 方式。使用新版代码需要重新发布对应的 Release 包。
+> 该脚本托管在原仓库的 Releases 里，本次改造没有改动它。v2.0 需要 **Node.js ≥ 22.13**，使用前请确认主机提供该版本；如果主机的 Node 较旧，请改用 Cloudflare / docker 方式。使用新版代码需要重新发布对应的 Release 包。
 
 ---
 
