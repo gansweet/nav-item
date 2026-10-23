@@ -226,6 +226,18 @@ info '正在安装后端生产依赖……'
 (cd "$WORKDIR" && npm install --omit=dev --no-audit --no-fund)
 
 info '正在安装前端依赖并构建 web/dist……'
+# Serv00 / CT8 基于 FreeBSD。若 Rollup 的原生模块在该主机上异常，
+# 使用其官方 WASM 发行包作为 Vite 的 Rollup 依赖，避免依赖平台原生二进制。
+# 仅修改部署目录内的 web/package.json，不改动仓库源码或用户数据库配置。
+if [[ "$(uname -s 2>/dev/null || true)" == 'FreeBSD' ]]; then
+  info '检测到 FreeBSD，启用 Rollup WASM 兼容模式……'
+  (
+    cd "$WORKDIR/web"
+    npm pkg set 'overrides.vite.rollup=npm:@rollup/wasm-node'
+    # 覆盖依赖来源后重新生成 lockfile，避免旧锁文件继续锁定原生 Rollup 包。
+    rm -f package-lock.json
+  )
+fi
 (cd "$WORKDIR/web" && npm install --no-audit --no-fund && npm run build)
 [[ -s "$WORKDIR/web/dist/index.html" ]] || die '前端构建结束，但未找到 web/dist/index.html。请查看上方 npm 输出。'
 # 生产运行只需要已构建的 dist；删除前端构建依赖以节省共享主机空间。
