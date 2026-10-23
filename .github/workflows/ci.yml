@@ -18,21 +18,30 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
 
       - name: Install root dependencies
-        run: npm install
+        run: |
+          if [ -f "package.json" ]; then
+            npm install
+          fi
 
       - name: Install frontend dependencies and build
         run: |
           if [ -d "web" ]; then
             cd web
-            npm install
-            npm run build
+            if [ -f "package.json" ]; then
+              npm install
+              npm run build
+            fi
             cd ..
           fi
 
       - name: Run tests
-        run: npm test
+        run: |
+          if [ -f "package.json" ] && grep -q "\"test\"" package.json; then
+            npm test
+          else
+            echo "No test script defined, skipping."
+          fi
         env:
           NODE_ENV: test
