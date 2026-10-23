@@ -86,7 +86,10 @@ describe('旧版 nav.db 兼容', () => {
   it('旧库迁移脚本：old-db-to-json 生成的备份可导入全新实例，数据一致', async () => {
     const out = path.join(dir, 'converted.json');
     const log = execFileSync(process.execPath, ['--disable-warning=ExperimentalWarning', 'scripts/old-db-to-json.js', file, out], { encoding: 'utf8' });
-    assert.match(log, /cards:\s*(?:\u001b\[\d+m)?3/);
+    
+    const cleanLog = log.replace(/\x1b\[[0-9;]*m/g, '');
+    assert.match(cleanLog, /cards: 3/);
+
     const backup = JSON.parse(fs.readFileSync(out, 'utf8'));
     assert.equal(backup.format, 'nav-item-backup'); assert.equal(backup.tables.users, undefined);
     const target = makeApp(openNodeDb(':memory:'));
