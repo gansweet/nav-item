@@ -9,7 +9,7 @@
 | 方式 | 运行环境 | 数据库 |
 | --- | --- | --- |
 | ☁️ **Cloudflare Workers / Pages**（新） | Cloudflare 边缘网络 | **Cloudflare D1**（SQLite） |
-| 🖥️ **自托管**（原有） | Node.js ≥ 22.13：源码 / gansweet / gansweet-compose / Debian 一键脚本 / serv00 | 本地 SQLite 文件（`database/nav.db`） |
+| 🖥️ **自托管**（原有） | Node.js ≥ 22.13：源码 / docker / docker-compose / Debian 一键脚本 / serv00 | 本地 SQLite 文件（`database/nav.db`） |
 
 ## 🛠️ 技术栈
 
