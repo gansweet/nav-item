@@ -7,7 +7,7 @@
 export const SEED_MENUS = [[1,"Home",1],[2,"AI Platform",2],[3,"Cloud Server",3],[4,"Software&OS",5],[5,"Tools",6],[6,"Mail&Domain",7],[7,"VPS&Container",4],[8,"Dev",8],[9,"TV",9]];
 export const SEED_SUB_MENUS = [[1,4,"Proxy",1],[2,4,"Macos",2],[3,7,"Game Server",1],[4,5,"Free SMS",1],[5,6,"Domain",1],[6,8,"Dev Tools",1]];
 export const SEED_CARDS = [
-  [1,null,"Backend","https://nav.amos.ip-ddns.com/admin","https://aomega-yahai.serv00.net/wp-content/uploads/2025/10/backendicon.jpg","信息导航管理系统",1],
+  [1,null,"Backend","https://yourdomain.com/admin","https://aomega-yahai.serv00.net/wp-content/uploads/2025/10/backendicon.jpg","信息导航管理系统",1],
   [1,null,"Youtube","https://www.youtube.com","https://img.icons8.com/ios-filled/100/ff1d06/youtube-play.png","全球最大的视频社区",10],
   [1,null,"Gmail","https://mail.google.com","https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico","",11],
   [1,null,"GitHub","https://github.com","","全球最大的代码托管平台",3],
@@ -195,4 +195,4 @@ export const SEED_CARDS = [
   [null,1,"FIClash","https://github.com/chen08209/FlClash","","for MacOs & Windows",0],
   [7,null,"Wasmer","https://wasmer.io/","https://wasmer.io/","agsOutlook Register",0]
 ];
-export const SEED_FRIENDS = [["Noodseek图床","https://www.nodeimage.com","https://www.nodeseek.com/static/image/favicon/favicon-32x32.png"],["IP6.ARPA域名自动添加SSL证书","https://ssl.1.2.e.f.0.d.0.0.1.0.a.2.ip6.arpa/","https://fontawesome.com/favicon.ico"],["老王导航","https://nav.eooce.com/",""],["Serv00 Status","https://status.eooce.com/","https://www.serv00.com/wp-content/uploads/2025/05/cropped-favicon-1-32x32.png"],["Amos博客","https://blog.amos.ip-ddns.com/","https://blog.amos.ip-ddns.com/img/amoz_avatar.png"]];
+export const SEED_FRIENDS = [["Noodseek图床","https://www.nodeimage.com","https://www.nodeseek.com/static/image/favicon/favicon-32x32.png"],["IP6.ARPA域名自动添加SSL证书","https://ssl.1.2.e.f.0.d.0.0.1.0.a.2.ip6.arpa/","https://fontawesome.com/favicon.ico"],["老王导航","https://nav.eooce.com/",""],["Serv00 Status","https://status.eooce.com/","https://www.serv00.com/wp-content/uploads/2025/05/cropped-favicon-1-32x32.png"],["Amos博客","https://blog.amos.com/","https://blog.amos.com/img/amoz_avatar.png"]];
