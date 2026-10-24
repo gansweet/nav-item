@@ -273,6 +273,10 @@ ghcr.io/gansweet/nav-item:latest
 ```bash
 bash <(curl -Ls https://raw.githubusercontent.com/gansweet/nav-item/main/scripts/install-debian.sh)
 ```
+- or
+```
+curl -Ls https://raw.githubusercontent.com/gansweet/nav-item/main/scripts/install-debian.sh | sudo bash
+```
 
 **本地运行**（已下载 / 解压项目）：
 ```bash
