@@ -22,7 +22,7 @@
 set -euo pipefail
 
 APP_NAME="nav-item"
-REPO_URL="${REPO_URL:-https://github.com/Amosgantian/nav-item.git}"
+REPO_URL="${REPO_URL:-https://github.com/gansweet/nav-item.git}"
 BRANCH="${BRANCH:-main}"
 INSTALL_DIR="${INSTALL_DIR:-/opt/nav-item}"
 PORT="${PORT:-3000}"
